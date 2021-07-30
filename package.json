@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "test": "jest",
+    "watch": "webpack --watch",
+    "start": "webpack serve --open",
     "build": "webpack"
   },
   "author": "Robert Ericskon",
@@ -15,5 +17,24 @@
     "style-loader": "^3.2.1",
     "webpack": "^5.47.1",
     "webpack-cli": "^4.7.2"
+  },
+  "jest": {
+    "modulePaths": [
+      "/shared/vendor/modules"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "bower_components",
+      "shared"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
+      "^react(.*)$": "<rootDir>/vendor/react-master$1",
+      "^config$": "<rootDir>/configs/app-config.js"
+    }
   }
 }
