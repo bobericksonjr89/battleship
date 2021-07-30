@@ -1,4 +1,4 @@
-const Ship = (length) => {
+const Ship = (length, name) => {
   const health = [];
 
   const hit = (number) => {
@@ -15,10 +15,9 @@ const Ship = (length) => {
     }
     return false;
   };
-  return { length, hit, isSunk };
+  return { length, name, hit, isSunk };
 };
-
-//export default Ship;
+module.exports = Ship;
 
 // hit returns true or false (false if already hit)
 // isSunk returns true or false;
