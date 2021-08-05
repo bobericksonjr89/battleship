@@ -1,16 +1,17 @@
 const Ship = (length, name) => {
-  const health = [];
+  let health = length;
 
-  const hit = (number) => {
-    if (health[number] != true) {
-      health[number] = true;
+  const hit = () => {
+    if (!isSunk()) {
+      health--;
+      console.log(health);
       return true;
     }
     return false;
   };
 
   const isSunk = () => {
-    if (health.length === length && health.every((x) => x === true)) {
+    if (health === 0) {
       return true;
     }
     return false;

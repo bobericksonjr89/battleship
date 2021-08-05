@@ -1,5 +1,5 @@
-const Gameboard = require("../src/gameboard.js");
-const Ship = require("../src/ship.js");
+const Gameboard = require("../src/Gameboard.js");
+const Ship = require("../src/Ship.js");
 //import Ship from "../src/ship.mjs";
 
 test("ships fit within gameboard (1)", () => {
@@ -50,16 +50,33 @@ test("ships exist on board", () => {
   expect(board.board[1][0]).toBeFalsy();
 });
 
-test.todo("hits are recorded as hits");
+test("hits are recorded as hits", () => {
+  const board = Gameboard();
+  board.placeShip(Ship(4, "battleship"), 6, 0, "horizontal");
+  board.placeShip(Ship(5, "carrier"), 1, 2, "vertical");
+  expect(board.recieveAttack(5, 0)).toBe("miss");
+  expect(board.recieveAttack(7, 0)).toBe("hit");
+});
 
-test.todo("misses are recorded as misses");
+test("misses are recorded as misses", () => {
+  const board = Gameboard();
+  board.placeShip(Ship(4, "battleship"), 6, 0, "horizontal");
+  board.placeShip(Ship(5, "carrier"), 1, 2, "vertical");
+  expect(board.recieveAttack(5, 0)).toBe("miss");
+  expect(board.board[5][0]).toEqual("miss");
+});
 
-test.todo("gameboard reports when all ships sunk");
-
-/* const board = new Gameboard()
-board.add(new BattleShip("A","8","vertical"))
-expect(board.getCoords("A","8")).toBe(PARTOFTHESHIP) */
-
-/* obviously i'm making assumptions about how you're setting things up... 
-but if you can add things to your board, you should be able to also GET things from your board.  
-SO testing is: add thing to board, then make sure it's there. */
+test("gameboard reports when all ships sunk", () => {
+  const board = Gameboard();
+  board.placeShip(Ship(4, "battleship"), 6, 0, "horizontal");
+  board.placeShip(Ship(2, "patrol"), 2, 2, "vertical");
+  board.recieveAttack(6, 0);
+  board.recieveAttack(7, 0);
+  board.recieveAttack(8, 0);
+  expect(board.allSunk()).toBe(false);
+  board.recieveAttack(9, 0);
+  expect(board.allSunk()).toBe(false);
+  board.recieveAttack(2, 2);
+  board.recieveAttack(2, 3);
+  expect(board.allSunk()).toBe(true);
+});
