@@ -40,7 +40,6 @@ const Gameboard = () => {
 
   const recieveAttack = (x, y) => {
     if (board[x][y]) {
-      console.log(board[x][y]);
       board[x][y].hit();
       return "hit";
     }
@@ -57,11 +56,4 @@ const Gameboard = () => {
   return { placeShip, recieveAttack, allSunk, board };
 };
 
-/* const playerboard = Gameboard();
-playerboard.placeShip(Ship(4, "battleship"), 6, 9, "horizontal"); */
-
 module.exports = Gameboard;
-
-//Gameboard.placeShip(Ship(4), x, y, direction);
-// placeship returns true, false if ship won't fit on board
-// false if space already taken
