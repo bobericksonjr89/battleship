@@ -1,25 +1,183 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/ship.js":
+/***/ "./src/Gameboard.js":
+/*!**************************!*\
+  !*** ./src/Gameboard.js ***!
+  \**************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Ship = __webpack_require__(/*! ./Ship.js */ "./src/Ship.js");
+
+const Gameboard = () => {
+  const board = [];
+  for (let i = 0; i < 10; i++) {
+    board[i] = [];
+  }
+
+  const ships = [];
+
+  const placeShip = (ship, x, y, direction) => {
+    const shipLength = ship.length;
+    if (direction === "horizontal") {
+      if (x + shipLength - 1 > 9) {
+        return false;
+      }
+      for (let i = 0; i < shipLength; i++) {
+        if (board[x + i][y]) {
+          return false;
+        }
+        board[x + i][y] = ship;
+      }
+      ships.push(ship);
+    }
+
+    if (direction === "vertical") {
+      if (y + shipLength - 1 > 9) {
+        return false;
+      }
+      for (let i = 0; i < shipLength; i++) {
+        if (board[x][y + i]) {
+          return false;
+        }
+        board[x][y + i] = ship;
+      }
+      ships.push(ship);
+    }
+    return true;
+  };
+
+  const recieveAttack = (x, y) => {
+    if (board[x][y]) {
+      board[x][y].hit();
+      return "hit";
+    }
+    if (!board[x][y]) {
+      board[x][y] = "miss";
+      return "miss";
+    }
+  };
+
+  const allSunk = () => {
+    return ships.every((ship) => ship.isSunk() === true);
+  };
+
+  return { placeShip, recieveAttack, allSunk, board };
+};
+
+module.exports = Gameboard;
+
+
+/***/ }),
+
+/***/ "./src/Player.js":
+/*!***********************!*\
+  !*** ./src/Player.js ***!
+  \***********************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Gameboard = __webpack_require__(/*! ./Gameboard.js */ "./src/Gameboard.js");
+const Ship = __webpack_require__(/*! ./Ship.js */ "./src/Ship.js");
+
+const Player = () => {
+  const playerBoard = Gameboard();
+
+  const patrolBoat = Ship(2, "Patrol Boat");
+  const submarine = Ship(3, "Submarine");
+  const destroyer = Ship(3, "Destroyer");
+  const battleship = Ship(4, "Battleship");
+  const carrier = Ship(5, "Carrier");
+
+  const moves = [];
+
+  const attackBoard = (enemyBoard, x, y) => {
+    const result = enemyBoard.recieveAttack(x, y);
+    return result;
+  };
+
+  const generateCoordinates = () => {
+    let randomX;
+    let randomY;
+    do {
+      randomX = randomInt();
+      randomY = randomInt();
+    } while (moves.includes({ x: randomX, y: randomY }));
+    moves.push({ x: randomX, y: randomY });
+
+    return { x: randomX, y: randomY };
+    // get new coordinates if already fired
+    // do-while loop in game module
+  };
+
+  const randomInt = () => {
+    return Math.floor(
+      Math.random() * (Math.floor(9) - Math.ceil(0) + 1) + Math.ceil(0)
+    );
+  };
+
+  return {
+    playerBoard,
+    patrolBoat,
+    submarine,
+    destroyer,
+    battleship,
+    carrier,
+    attackBoard,
+    generateCoordinates,
+  };
+};
+
+module.exports = Player;
+
+const player = Player();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+player.generateCoordinates();
+
+
+/***/ }),
+
+/***/ "./src/Ship.js":
 /*!*********************!*\
-  !*** ./src/ship.js ***!
+  !*** ./src/Ship.js ***!
   \*********************/
 /***/ ((module) => {
 
 const Ship = (length, name) => {
-  const health = [];
+  let health = length;
 
-  const hit = (number) => {
-    if (health[number] != true) {
-      health[number] = true;
+  const hit = () => {
+    if (!isSunk()) {
+      health--;
+      console.log(health);
       return true;
     }
     return false;
   };
 
   const isSunk = () => {
-    if (health.length === length && health.every((x) => x === true)) {
+    if (health === 0) {
       return true;
     }
     return false;
@@ -61,58 +219,17 @@ module.exports = Ship;
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
-/*!**********************!*\
-  !*** ./src/index.js ***!
-  \**********************/
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _ship_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ship.js */ "./src/ship.js");
-/* harmony import */ var _ship_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_ship_js__WEBPACK_IMPORTED_MODULE_0__);
+/*!********************!*\
+  !*** ./src/app.js ***!
+  \********************/
+const Player = __webpack_require__(/*! ./Player.js */ "./src/Player.js");
+const Gameboard = __webpack_require__(/*! ./Gameboard.js */ "./src/Gameboard.js");
+const Ship = __webpack_require__(/*! ./Ship.js */ "./src/Ship.js");
 
+const app = (() => {})();
 
 })();
 

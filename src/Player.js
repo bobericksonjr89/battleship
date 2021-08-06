@@ -50,29 +50,3 @@ const Player = () => {
 };
 
 module.exports = Player;
-
-const player = Player();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
