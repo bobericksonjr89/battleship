@@ -30,8 +30,12 @@ const app = (() => {
   // gameflow starts
   function gameFlow() {
     turn++;
+    // odd turns are player 1
+    //DO WHILE??
+    if (turn % 2 === 1) {
+    }
   }
-  // odd turns are player 1
+
   // even turns are player 2
   // 34 turns minimum before win condition could be met
   // player selects space

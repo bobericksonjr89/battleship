@@ -1,6 +1,50 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/DOM.js":
+/*!********************!*\
+  !*** ./src/DOM.js ***!
+  \********************/
+/***/ (() => {
+
+const DOM = (() => {
+  // DOM capture
+  playerBoard = document.querySelector(".player-info__board");
+  gameBoard = document.querySelector(".game-area__gameboard");
+
+  function displayPlayerBoard() {
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        let playerSpace = document.createElement("div");
+        playerSpace.classList.add("player-info__player-space");
+        playerSpace.dataset.X = i;
+        playerSpace.dataset.Y = j;
+        playerBoard.appendChild(playerSpace);
+      }
+    }
+  }
+
+  function displayGameBoard() {
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        let gameSpace = document.createElement("div");
+        gameSpace.classList.add("game-area__gameboard-space");
+        gameSpace.dataset.X = i;
+        gameSpace.dataset.Y = j;
+        gameBoard.appendChild(gameSpace);
+      }
+    }
+  }
+
+  //gridDiv.appendChild(document.createElement("div")).classList.add("grid-box");
+
+  displayPlayerBoard();
+  displayGameBoard();
+})();
+
+
+/***/ }),
+
 /***/ "./src/Gameboard.js":
 /*!**************************!*\
   !*** ./src/Gameboard.js ***!
@@ -129,32 +173,6 @@ const Player = () => {
 
 module.exports = Player;
 
-const player = Player();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-player.generateCoordinates();
-
 
 /***/ }),
 
@@ -228,8 +246,56 @@ var __webpack_exports__ = {};
 const Player = __webpack_require__(/*! ./Player.js */ "./src/Player.js");
 const Gameboard = __webpack_require__(/*! ./Gameboard.js */ "./src/Gameboard.js");
 const Ship = __webpack_require__(/*! ./Ship.js */ "./src/Ship.js");
+const DOM = __webpack_require__(/*! ./DOM.js */ "./src/DOM.js");
 
-const app = (() => {})();
+const app = (() => {
+  // assign player1
+  const player1 = Player();
+  // assign player2
+  const player2 = Player();
+  // init turn variable
+  let turn = 0;
+  // player 1 places ships
+  // player 2 places ships
+  // (preselected for now...)
+  function placeShips() {
+    player1.playerBoard.placeShip(player1.patrolBoat, 2, 4, "vertical");
+    player1.playerBoard.placeShip(player1.submarine, 1, 0, "horizontal");
+    player1.playerBoard.placeShip(player1.destroyer, 8, 3, "vertical");
+    player1.playerBoard.placeShip(player1.battleship, 4, 4, "vertical");
+    player1.playerBoard.placeShip(player1.carrier, 1, 2, "horizontal");
+
+    player2.playerBoard.placeShip(player2.patrolBoat, 0, 0, "vertical");
+    player2.playerBoard.placeShip(player2.submarine, 4, 7, "vertical");
+    player2.playerBoard.placeShip(player2.destroyer, 5, 1, "horizontal");
+    player2.playerBoard.placeShip(player2.battleship, 2, 2, "vertical");
+    player2.playerBoard.placeShip(player2.carrier, 5, 5, "horizontal");
+  }
+
+  // gameflow starts
+  function gameFlow() {
+    turn++;
+    // odd turns are player 1
+    //DO WHILE??
+    if (turn % 2 === 1) {
+    }
+  }
+
+  // even turns are player 2
+  // 34 turns minimum before win condition could be met
+  // player selects space
+  // returns hit or miss
+  // DOM displays result
+  // "sink ship" if applicable
+  // DOM displays sunked ship
+  // if turn >= 34, check if game over
+  // if game over, display winner
+  // click to restart game
+  //  reset turns, reset players, place ships, start the flow again
+
+  placeShips();
+  gameFlow();
+})();
 
 })();
 
