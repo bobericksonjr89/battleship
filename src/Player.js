@@ -23,7 +23,7 @@ const Player = () => {
     do {
       randomX = randomInt();
       randomY = randomInt();
-    } while (moves.includes({ x: randomX, y: randomY }));
+    } while (moves.some((move) => move.x === randomX && move.y === randomY));
     moves.push({ x: randomX, y: randomY });
 
     return { x: randomX, y: randomY };

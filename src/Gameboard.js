@@ -1,5 +1,3 @@
-const Ship = require("./Ship.js");
-
 const Gameboard = () => {
   const board = [];
   for (let i = 0; i < 10; i++) {
