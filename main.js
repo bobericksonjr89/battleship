@@ -9,8 +9,9 @@
 
 const DOM = (() => {
   // DOM capture
-  playerBoard = document.querySelector(".player-info__board");
-  gameBoard = document.querySelector(".game-area__gameboard");
+  const playerBoard = document.querySelector(".player-info__board");
+  const gameBoard = document.querySelector(".game-area__gameboard");
+  const message = document.querySelector(".message-area__message");
 
   function displayPlayerBoard() {
     for (let i = 0; i < 10; i++) {
@@ -60,6 +61,7 @@ const DOM = (() => {
       `.game-area__gameboard-space[data-x='${x}'][data-y='${y}']`
     );
     space.classList.add("game-area__gameboard-space--hit");
+    message.innerText = "A hit!";
   }
 
   function displayMiss(x, y) {
@@ -67,6 +69,7 @@ const DOM = (() => {
       `.game-area__gameboard-space[data-x='${x}'][data-y='${y}']`
     );
     space.classList.add("game-area__gameboard-space--miss");
+    message.innerText = "A miss!";
   }
 
   function displayPlayerHit(x, y) {
@@ -74,6 +77,7 @@ const DOM = (() => {
       `.player-info__player-space[data-x='${x}'][data-y='${y}']`
     );
     space.classList.add("player-info__player-space--hit");
+    message.innerText = "You're hit!";
   }
 
   function displayPlayerMiss(x, y) {
@@ -81,9 +85,25 @@ const DOM = (() => {
       `.player-info__player-space[data-x='${x}'][data-y='${y}']`
     );
     space.classList.add("player-info__player-space--miss");
+    message.innerText = "Opponnent missed!";
   }
 
-  //gridDiv.appendChild(document.createElement("div")).classList.add("grid-box");
+  function displaySunkShip(coordinates) {
+    coordinates.forEach((coord) => {
+      const space = document.querySelector(
+        `.game-area__gameboard-space[data-x='${coord.x}'][data-y='${coord.y}']`
+      );
+      space.innerText = "☓";
+    });
+  }
+
+  function displayWinner(winner) {
+    if (winner === "player") {
+      message.innerText = "You won!";
+      return;
+    }
+    message.innerText = "Computer defeated you!";
+  }
 
   displayPlayerBoard();
   displayGameBoard();
@@ -94,6 +114,8 @@ const DOM = (() => {
     displayMiss,
     displayPlayerHit,
     displayPlayerMiss,
+    displayWinner,
+    displaySunkShip,
   };
 })();
 
@@ -149,6 +171,9 @@ const Gameboard = () => {
   const recieveAttack = (x, y) => {
     if (board[x][y]) {
       board[x][y].hit();
+      if (board[x][y].isSunk()) {
+        return board[x][y];
+      }
       return "hit";
     }
     if (!board[x][y]) {
@@ -188,24 +213,97 @@ const Player = () => {
   const carrier = Ship(5, "Carrier");
 
   const moves = [];
+  const turnResults = [];
 
   const attackBoard = (enemyBoard, x, y) => {
     const result = enemyBoard.recieveAttack(x, y);
     return result;
   };
 
-  const generateCoordinates = () => {
-    let randomX;
-    let randomY;
+  const randomCoords = () => {
     do {
-      randomX = randomInt();
-      randomY = randomInt();
-    } while (moves.some((move) => move.x === randomX && move.y === randomY));
-    moves.push({ x: randomX, y: randomY });
+      X = randomInt();
+      Y = randomInt();
+    } while (moves.some((move) => move.x === X && move.y === Y));
+    moves.push({ x: X, y: Y });
 
-    return { x: randomX, y: randomY };
-    // get new coordinates if already fired
-    // do-while loop in game module
+    return { x: X, y: Y };
+  };
+
+  const generateCoordinates = () => {
+    const length = turnResults.length;
+    let X;
+    let Y;
+    let lastHit;
+    let justSank;
+
+    if (turnResults[length - 1] instanceof Object) {
+      justSank = true;
+    }
+    // if a hit then a miss, go back and try squares around the hit
+    if (
+      justSank !== true &&
+      (turnResults[length - 1] === "hit" ||
+        turnResults[length - 2] === "hit" ||
+        turnResults[length - 3] === "hit" ||
+        turnResults[length - 4] === "hit")
+    ) {
+      if (
+        turnResults[length - 3] === "miss" &&
+        turnResults[length - 2] === "miss" &&
+        turnResults[length - 1] === "miss"
+      ) {
+        lastHit = moves[moves.length - 4];
+      } else if (
+        turnResults[length - 3] === "hit" &&
+        turnResults[length - 2] === "miss" &&
+        turnResults[length - 1] === "miss"
+      ) {
+        lastHit = moves[moves.length - 3];
+      } else if (
+        turnResults[length - 2] === "hit" &&
+        turnResults[length - 1] === "miss"
+      ) {
+        lastHit = moves[moves.length - 2];
+      } else if (turnResults[length - 1] === "hit") {
+        lastHit = moves[moves.length - 1];
+      } else {
+        return randomCoords();
+      }
+      //
+
+      if (
+        lastHit.x + 1 < 10 &&
+        !moves.some((move) => move.x === lastHit.x + 1 && move.y === lastHit.y)
+      ) {
+        moves.push({ x: lastHit.x + 1, y: lastHit.y });
+        return { x: lastHit.x + 1, y: lastHit.y };
+      }
+      //
+      if (
+        lastHit.y + 1 < 10 &&
+        !moves.some((move) => move.x === lastHit.x && move.y === lastHit.y + 1)
+      ) {
+        moves.push({ x: lastHit.x, y: lastHit.y + 1 });
+        return { x: lastHit.x, y: lastHit.y + 1 };
+      }
+      //
+      if (
+        lastHit.x - 1 >= 0 &&
+        !moves.some((move) => move.x === lastHit.x - 1 && move.y === lastHit.y)
+      ) {
+        moves.push({ x: lastHit.x - 1, y: lastHit.y });
+        return { x: lastHit.x - 1, y: lastHit.y };
+      }
+      if (
+        lastHit.y - 1 >= 0 &&
+        !moves.some((move) => move.x === lastHit.x && move.y === lastHit.y - 1)
+      ) {
+        moves.push({ x: lastHit.x, y: lastHit.y - 1 });
+        return { x: lastHit.x, y: lastHit.y - 1 };
+      }
+    }
+    return randomCoords();
   };
 
   const randomInt = () => {
@@ -223,6 +321,7 @@ const Player = () => {
     carrier,
     attackBoard,
     generateCoordinates,
+    turnResults,
   };
 };
 
@@ -283,11 +382,8 @@ const app = (() => {
   // Event Handlers
   enemySpaces.forEach((space) => space.addEventListener("click", attack));
 
-  // assign player1
   const player1 = Player();
-  // assign player2
   const player2 = Player();
-  // init turn variable
   let turn = 1;
   // player 1 places ships
   // player 2 places ships
@@ -311,30 +407,44 @@ const app = (() => {
     player2.playerBoard.placeShip(player2.carrier, 5, 5, "horizontal");
   }
 
-  // gameflow starts
-  function gameFlow() {
-    // turn++;
-    // odd turns are player 1
-    //DO WHILE??
-    if (turn % 2 === 1) {
-    }
-  }
-
   function attack(e) {
     if (turn % 2 !== 1) {
       return;
     }
+
+    e.target.removeEventListener("click", attack);
+
     const xCoord = e.target.dataset.x;
     const yCoord = e.target.dataset.y;
     const result = player1.attackBoard(player2.playerBoard, xCoord, yCoord);
+    if (result instanceof Object) {
+      // returns ship object when ship sunk
+      DOM.displayHit(xCoord, yCoord);
+      const coords = [];
+      for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+          if (player2.playerBoard.board[i][j] === result) {
+            coords.push({ x: i, y: j });
+          }
+        }
+      }
+      DOM.displaySunkShip(coords);
+    }
     if (result === "hit") {
       DOM.displayHit(xCoord, yCoord);
     }
     if (result === "miss") {
       DOM.displayMiss(xCoord, yCoord);
     }
+    if (turn >= 34) {
+      if (player2.playerBoard.allSunk()) {
+        gameOver("player"); // p1 wins
+        return;
+      }
+    }
     turn++;
-    setTimeout(AIMove, 500);
+
+    setTimeout(AIMove, 750);
   }
 
   function AIMove() {
@@ -344,13 +454,25 @@ const app = (() => {
       AICoords.x,
       AICoords.y
     );
-    if (AIResult === "hit") {
+    if (AIResult === "hit" || AIResult instanceof Object) {
       DOM.displayPlayerHit(AICoords.x, AICoords.y);
     }
     if (AIResult === "miss") {
       DOM.displayPlayerMiss(AICoords.x, AICoords.y);
     }
+    player2.turnResults.push(AIResult);
+    if (turn >= 34) {
+      if (player1.playerBoard.allSunk()) {
+        gameOver("computer"); // p2 wins
+        return;
+      }
+    }
     turn++;
+  }
+
+  function gameOver(winner) {
+    DOM.displayWinner(winner);
+    enemySpaces.forEach((space) => space.removeEventListener("click", attack));
   }
 
   // even turns are player 2
@@ -366,9 +488,6 @@ const app = (() => {
   //  reset turns, reset players, place ships, start the flow again
 
   placeShips();
-  gameFlow();
-
-  return { attack };
 })();
 
 module.exports = app;

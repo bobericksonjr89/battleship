@@ -98,15 +98,15 @@ html {
 }
 
 .player-info__board {
-  width: 25.2rem;
+  width: 20rem;
   display: flex;
   flex-wrap: wrap;
   border-collapse: collapse;
 }
 
 .player-info__player-space {
-  height: 2.5rem;
-  width: 2.5rem;
+  height: 2rem;
+  width: 2rem;
   border: 1px solid black;
 }
 
@@ -147,14 +147,20 @@ html {
   width: 10%;
   height: 5rem;
   cursor: pointer;
+  font-size: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .game-area__gameboard-space--hit {
   background-color: red;
+  cursor: not-allowed;
 }
 
 .game-area__gameboard-space--miss {
   background-color: blue;
+  cursor: not-allowed;
 }
 
 /*-------------------
