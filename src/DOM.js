@@ -1,7 +1,8 @@
 const DOM = (() => {
   // DOM capture
-  playerBoard = document.querySelector(".player-info__board");
-  gameBoard = document.querySelector(".game-area__gameboard");
+  const playerBoard = document.querySelector(".player-info__board");
+  const gameBoard = document.querySelector(".game-area__gameboard");
+  const message = document.querySelector(".message-area__message");
 
   function displayPlayerBoard() {
     for (let i = 0; i < 10; i++) {
@@ -51,6 +52,7 @@ const DOM = (() => {
       `.game-area__gameboard-space[data-x='${x}'][data-y='${y}']`
     );
     space.classList.add("game-area__gameboard-space--hit");
+    message.innerText = "A hit!";
   }
 
   function displayMiss(x, y) {
@@ -58,6 +60,7 @@ const DOM = (() => {
       `.game-area__gameboard-space[data-x='${x}'][data-y='${y}']`
     );
     space.classList.add("game-area__gameboard-space--miss");
+    message.innerText = "A miss!";
   }
 
   function displayPlayerHit(x, y) {
@@ -65,6 +68,7 @@ const DOM = (() => {
       `.player-info__player-space[data-x='${x}'][data-y='${y}']`
     );
     space.classList.add("player-info__player-space--hit");
+    message.innerText = "You're hit!";
   }
 
   function displayPlayerMiss(x, y) {
@@ -72,9 +76,25 @@ const DOM = (() => {
       `.player-info__player-space[data-x='${x}'][data-y='${y}']`
     );
     space.classList.add("player-info__player-space--miss");
+    message.innerText = "Opponnent missed!";
   }
 
-  //gridDiv.appendChild(document.createElement("div")).classList.add("grid-box");
+  function displaySunkShip(coordinates) {
+    coordinates.forEach((coord) => {
+      const space = document.querySelector(
+        `.game-area__gameboard-space[data-x='${coord.x}'][data-y='${coord.y}']`
+      );
+      space.innerText = "☓";
+    });
+  }
+
+  function displayWinner(winner) {
+    if (winner === "player") {
+      message.innerText = "You won!";
+      return;
+    }
+    message.innerText = "Computer defeated you!";
+  }
 
   displayPlayerBoard();
   displayGameBoard();
@@ -85,6 +105,8 @@ const DOM = (() => {
     displayMiss,
     displayPlayerHit,
     displayPlayerMiss,
+    displayWinner,
+    displaySunkShip,
   };
 })();
 

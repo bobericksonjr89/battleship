@@ -39,6 +39,9 @@ const Gameboard = () => {
   const recieveAttack = (x, y) => {
     if (board[x][y]) {
       board[x][y].hit();
+      if (board[x][y].isSunk()) {
+        return board[x][y];
+      }
       return "hit";
     }
     if (!board[x][y]) {
