@@ -12,6 +12,7 @@ const Player = () => {
 
   const moves = [];
   const turnResults = [];
+  let assumedDirection;
 
   const attackBoard = (enemyBoard, x, y) => {
     const result = enemyBoard.recieveAttack(x, y);
@@ -28,23 +29,127 @@ const Player = () => {
     return { x: X, y: Y };
   };
 
+  const trySquareToLeft = (ofThisSquare) => {
+    moves.push({ x: ofThisSquare.x - 1, y: ofThisSquare.y });
+    return { x: ofThisSquare.x - 1, y: ofThisSquare.y };
+  };
+
+  const trySquareToBottom = (ofThisSquare) => {
+    moves.push({ x: ofThisSquare.x, y: ofThisSquare.y + 1 });
+    return { x: ofThisSquare.x, y: ofThisSquare.y + 1 };
+  };
+
+  const trySquareToTop = (ofThisSquare) => {
+    moves.push({ x: ofThisSquare.x, y: ofThisSquare.y - 1 });
+    return { x: ofThisSquare.x, y: ofThisSquare.y - 1 };
+  };
+
+  const trySquareToRight = (ofThisSquare) => {
+    moves.push({ x: ofThisSquare.x + 1, y: ofThisSquare.y });
+    return { x: ofThisSquare.x + 1, y: ofThisSquare.y };
+  };
+
   const generateCoordinates = () => {
     const length = turnResults.length;
-    let X;
-    let Y;
     let lastHit;
-    let justSank;
 
     if (turnResults[length - 1] instanceof Object) {
-      justSank = true;
+      asummedDirection = null;
+      return randomCoords();
     }
+
+    if (
+      turnResults[length - 1] === "miss" &&
+      turnResults[length - 2] === "hit" &&
+      turnResults[length - 3] === "hit" &&
+      turnResults[length - 4] === "hit" &&
+      turnResults[length - 5] === "hit" &&
+      assumedDirection === "horizontal"
+    ) {
+      let firstHit = moves[moves.length - 5];
+      if (
+        firstHit.x - 1 >= 0 &&
+        !moves.some(
+          (move) => move.x === firstHit.x - 1 && move.y === firstHit.y
+        )
+      ) {
+        return trySquareToLeft(firstHit);
+      }
+    }
+
+    if (
+      turnResults[length - 1] === "miss" &&
+      turnResults[length - 2] === "hit" &&
+      turnResults[length - 3] === "hit" &&
+      turnResults[length - 4] === "hit" &&
+      assumedDirection === "horizontal"
+    ) {
+      let firstHit = moves[moves.length - 4];
+      if (
+        firstHit.x - 1 >= 0 &&
+        !moves.some(
+          (move) => move.x === firstHit.x - 1 && move.y === firstHit.y
+        )
+      ) {
+        return trySquareToLeft(firstHit);
+      }
+    }
+
+    if (
+      turnResults[length - 1] === "miss" &&
+      turnResults[length - 2] === "hit" &&
+      turnResults[length - 3] === "hit" &&
+      assumedDirection === "horizontal"
+    ) {
+      let firstHit = moves[moves.length - 3];
+      if (
+        firstHit.x - 1 >= 0 &&
+        !moves.some(
+          (move) => move.x === firstHit.x - 1 && move.y === firstHit.y
+        )
+      ) {
+        return trySquareToLeft(firstHit);
+      }
+    }
+
+    if (
+      turnResults[length - 1] === "hit" &&
+      turnResults[length - 2] === "miss" &&
+      turnResults[length - 3] === "hit" &&
+      assumedDirection === "vertical"
+    ) {
+      let lastHit = moves[moves.length - 1];
+      if (
+        lastHit.x - 1 >= 0 &&
+        !moves.some((move) => move.x === lastHit.x && move.y === lastHit.y + 1)
+      ) {
+        return trySquareToBottom(lastHit);
+      }
+    }
+    if (
+      turnResults[length - 1] === "miss" &&
+      turnResults[length - 2] === "hit" &&
+      turnResults[length - 3] === "miss" &&
+      turnResults[length - 4] === "hit" &&
+      assumedDirection === "vertical"
+    ) {
+      let firstHit = moves[moves.length - 4];
+      if (
+        firstHit.x - 1 >= 0 &&
+        !moves.some(
+          (move) => move.x === firstHit.x && move.y === firstHit.y - 1
+        )
+      ) {
+        return trySquareToTop(firstHit);
+      }
+    }
+
     // if a hit then a miss, go back and try squares around the hit
     if (
-      justSank !== true &&
-      (turnResults[length - 1] === "hit" ||
-        turnResults[length - 2] === "hit" ||
-        turnResults[length - 3] === "hit" ||
-        turnResults[length - 4] === "hit")
+      turnResults[length - 1] === "hit" ||
+      turnResults[length - 2] === "hit" ||
+      turnResults[length - 3] === "hit" ||
+      turnResults[length - 4] === "hit"
     ) {
       if (
         turnResults[length - 3] === "miss" &&
@@ -66,6 +171,7 @@ const Player = () => {
       } else if (turnResults[length - 1] === "hit") {
         lastHit = moves[moves.length - 1];
       } else {
+        assumedDirection = null;
         return randomCoords();
       }
       //
@@ -74,33 +180,34 @@ const Player = () => {
         lastHit.x + 1 < 10 &&
         !moves.some((move) => move.x === lastHit.x + 1 && move.y === lastHit.y)
       ) {
-        moves.push({ x: lastHit.x + 1, y: lastHit.y });
-        return { x: lastHit.x + 1, y: lastHit.y };
+        assumedDirection = "horizontal";
+        return trySquareToRight(lastHit);
       }
       //
       if (
         lastHit.y + 1 < 10 &&
         !moves.some((move) => move.x === lastHit.x && move.y === lastHit.y + 1)
       ) {
-        moves.push({ x: lastHit.x, y: lastHit.y + 1 });
-        return { x: lastHit.x, y: lastHit.y + 1 };
+        assumedDirection = "vertical";
+        return trySquareToBottom(lastHit);
       }
       //
       if (
         lastHit.x - 1 >= 0 &&
         !moves.some((move) => move.x === lastHit.x - 1 && move.y === lastHit.y)
       ) {
-        moves.push({ x: lastHit.x - 1, y: lastHit.y });
-        return { x: lastHit.x - 1, y: lastHit.y };
+        assumedDirection = "hotizontal";
+        return trySquareToLeft(lastHit);
       }
       if (
         lastHit.y - 1 >= 0 &&
         !moves.some((move) => move.x === lastHit.x && move.y === lastHit.y - 1)
       ) {
-        moves.push({ x: lastHit.x, y: lastHit.y - 1 });
-        return { x: lastHit.x, y: lastHit.y - 1 };
+        assumedDirection = "vertical";
+        return trySquareToTop(lastHit);
       }
     }
+    assumedDirection = null;
     return randomCoords();
   };
 
