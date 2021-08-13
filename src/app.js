@@ -26,11 +26,20 @@ const app = (() => {
     player1.playerBoard.placeShip(player1.carrier, 1, 2, "horizontal");
     DOM.colorPlayerSpace(player1.carrier, 1, 2, "horizontal");
 
-    player2.playerBoard.placeShip(player2.patrolBoat, 0, 0, "vertical");
+    const AIShips = [
+      player2.patrolBoat,
+      player2.submarine,
+      player2.destroyer,
+      player2.battleship,
+      player2.carrier,
+    ];
+    player2.playerBoard.placeShipsRandomly(AIShips);
+
+    /* player2.playerBoard.placeShip(player2.patrolBoat, 0, 0, "vertical");
     player2.playerBoard.placeShip(player2.submarine, 4, 7, "vertical");
     player2.playerBoard.placeShip(player2.destroyer, 5, 1, "horizontal");
     player2.playerBoard.placeShip(player2.battleship, 2, 2, "vertical");
-    player2.playerBoard.placeShip(player2.carrier, 5, 5, "horizontal");
+    player2.playerBoard.placeShip(player2.carrier, 5, 5, "horizontal"); */
   }
 
   function attack(e) {

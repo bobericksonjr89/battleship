@@ -166,6 +166,7 @@ const Gameboard = () => {
   const ships = [];
 
   const placeShip = (ship, x, y, direction) => {
+    // I CHANGED THIS
     const shipLength = ship.length;
     if (direction === "horizontal") {
       if (x + shipLength - 1 > 9) {
@@ -173,11 +174,14 @@ const Gameboard = () => {
       }
       for (let i = 0; i < shipLength; i++) {
         if (board[x + i][y]) {
+          // my bug...it's placing parts of ships bc returning false only after some squares are placed
           return false;
         }
+      }
+
+      for (let i = 0; i < shipLength; i++) {
         board[x + i][y] = ship;
       }
-      ships.push(ship);
     }
 
     if (direction === "vertical") {
@@ -188,11 +192,37 @@ const Gameboard = () => {
         if (board[x][y + i]) {
           return false;
         }
+      }
+      for (let i = 0; i < shipLength; i++) {
         board[x][y + i] = ship;
       }
-      ships.push(ship);
     }
+    ships.push(ship);
     return true;
+  };
+
+  const placeShipsRandomly = (ships) => {
+    console.log(ships);
+    let result;
+    let x;
+    let y;
+    let direction;
+    ships.forEach((ship) => {
+      do {
+        x = randomInt();
+        y = randomInt();
+        direction = randomInt() <= 4 ? "horizontal" : "vertical";
+        console.log(ship, x, y, direction);
+        result = placeShip(ship, x, y, direction);
+        console.log(ships);
+      } while (result === false);
+    });
+  };
+
+  const randomInt = () => {
+    return Math.floor(
+      Math.random() * (Math.floor(9) - Math.ceil(0) + 1) + Math.ceil(0)
+    );
   };
 
   const recieveAttack = (x, y) => {
@@ -213,7 +243,7 @@ const Gameboard = () => {
     return ships.every((ship) => ship.isSunk() === true);
   };
 
-  return { placeShip, recieveAttack, allSunk, board };
+  return { placeShip, placeShipsRandomly, recieveAttack, allSunk, board };
 };
 
 module.exports = Gameboard;
@@ -241,7 +271,6 @@ const Player = () => {
 
   const moves = [];
   const turnResults = [];
-  let assumedDirection;
 
   let foundHit;
   let direction;
@@ -319,8 +348,7 @@ const Player = () => {
   const generateCoordinates = () => {
     let lastTurn = turnResults[turnResults.length - 1];
     let lastMove = moves[moves.length - 1];
-    console.log(lastTurn);
-    console.log(lastMove);
+
     if (lastTurn instanceof Object) {
       // reset variables once ship is finally sank
       foundHit = null;
@@ -432,168 +460,6 @@ const Player = () => {
     return randomCoords();
   };
 
-  /* const generateCoordinates = () => {
-    const length = turnResults.length;
-    let lastHit;
-
-    if (turnResults[length - 1] instanceof Object) { a
-      asummedDirection = null;
-      return randomCoords();
-    }
-
-    if (
-      turnResults[length - 1] === "miss" &&
-      turnResults[length - 2] === "hit" &&
-      turnResults[length - 3] === "hit" &&
-      turnResults[length - 4] === "hit" &&
-      turnResults[length - 5] === "hit" &&
-      assumedDirection === "horizontal"
-    ) {
-      let firstHit = moves[moves.length - 5];
-      if (
-        firstHit.x - 1 >= 0 &&
-        !moves.some(
-          (move) => move.x === firstHit.x - 1 && move.y === firstHit.y
-        )
-      ) {
-        return trySquareToLeft(firstHit);
-      }
-    }
-
-    if (
-      turnResults[length - 1] === "miss" &&
-      turnResults[length - 2] === "hit" &&
-      turnResults[length - 3] === "hit" &&
-      turnResults[length - 4] === "hit" &&
-      assumedDirection === "horizontal"
-    ) {
-      let firstHit = moves[moves.length - 4];
-      if (
-        firstHit.x - 1 >= 0 &&
-        !moves.some(
-          (move) => move.x === firstHit.x - 1 && move.y === firstHit.y
-        )
-      ) {
-        return trySquareToLeft(firstHit);
-      }
-    }
-
-    if (
-      turnResults[length - 1] === "miss" &&
-      turnResults[length - 2] === "hit" &&
-      turnResults[length - 3] === "hit" &&
-      assumedDirection === "horizontal"
-    ) {
-      let firstHit = moves[moves.length - 3];
-      if (
-        firstHit.x - 1 >= 0 &&
-        !moves.some(
-          (move) => move.x === firstHit.x - 1 && move.y === firstHit.y
-        )
-      ) {
-        return trySquareToLeft(firstHit);
-      }
-    }
-
-    if (
-      turnResults[length - 1] === "hit" &&
-      turnResults[length - 2] === "miss" &&
-      turnResults[length - 3] === "hit" &&
-      assumedDirection === "vertical"
-    ) {
-      let lastHit = moves[moves.length - 1];
-      if (
-        lastHit.x - 1 >= 0 &&
-        !moves.some((move) => move.x === lastHit.x && move.y === lastHit.y + 1)
-      ) {
-        return trySquareToBottom(lastHit);
-      }
-    }
-    if (
-      turnResults[length - 1] === "miss" &&
-      turnResults[length - 2] === "hit" &&
-      turnResults[length - 3] === "miss" &&
-      turnResults[length - 4] === "hit" &&
-      assumedDirection === "vertical"
-    ) {
-      let firstHit = moves[moves.length - 4];
-      if (
-        firstHit.x - 1 >= 0 &&
-        !moves.some(
-          (move) => move.x === firstHit.x && move.y === firstHit.y - 1
-        )
-      ) {
-        return trySquareToTop(firstHit);
-      }
-    }
-
-    // if a hit then a miss, go back and try squares around the hit
-    if (
-      turnResults[length - 1] === "hit" ||
-      turnResults[length - 2] === "hit" ||
-      turnResults[length - 3] === "hit" ||
-      turnResults[length - 4] === "hit"
-    ) {
-      if (
-        turnResults[length - 3] === "miss" &&
-        turnResults[length - 2] === "miss" &&
-        turnResults[length - 1] === "miss"
-      ) {
-        lastHit = moves[moves.length - 4];
-      } else if (
-        turnResults[length - 3] === "hit" &&
-        turnResults[length - 2] === "miss" &&
-        turnResults[length - 1] === "miss"
-      ) {
-        lastHit = moves[moves.length - 3];
-      } else if (
-        turnResults[length - 2] === "hit" &&
-        turnResults[length - 1] === "miss"
-      ) {
-        lastHit = moves[moves.length - 2];
-      } else if (turnResults[length - 1] === "hit") {
-        lastHit = moves[moves.length - 1];
-      } else {
-        assumedDirection = null;
-        return randomCoords();
-      }
-      //
-
-      if (
-        lastHit.x + 1 < 10 &&
-        !moves.some((move) => move.x === lastHit.x + 1 && move.y === lastHit.y)
-      ) {
-        assumedDirection = "horizontal";
-        return trySquareToRight(lastHit);
-      }
-      //
-      if (
-        lastHit.y + 1 < 10 &&
-        !moves.some((move) => move.x === lastHit.x && move.y === lastHit.y + 1)
-      ) {
-        assumedDirection = "vertical";
-        return trySquareToBottom(lastHit);
-      }
-      //
-      if (
-        lastHit.x - 1 >= 0 &&
-        !moves.some((move) => move.x === lastHit.x - 1 && move.y === lastHit.y)
-      ) {
-        assumedDirection = "hotizontal";
-        return trySquareToLeft(lastHit);
-      }
-      if (
-        lastHit.y - 1 >= 0 &&
-        !moves.some((move) => move.x === lastHit.x && move.y === lastHit.y - 1)
-      ) {
-        assumedDirection = "vertical";
-        return trySquareToTop(lastHit);
-      }
-    }
-    assumedDirection = null;
-    return randomCoords();
-  }; */
-
   const randomInt = () => {
     return Math.floor(
       Math.random() * (Math.floor(9) - Math.ceil(0) + 1) + Math.ceil(0)
@@ -686,11 +552,20 @@ const app = (() => {
     player1.playerBoard.placeShip(player1.carrier, 1, 2, "horizontal");
     DOM.colorPlayerSpace(player1.carrier, 1, 2, "horizontal");
 
-    player2.playerBoard.placeShip(player2.patrolBoat, 0, 0, "vertical");
+    const AIShips = [
+      player2.patrolBoat,
+      player2.submarine,
+      player2.destroyer,
+      player2.battleship,
+      player2.carrier,
+    ];
+    player2.playerBoard.placeShipsRandomly(AIShips);
+
+    /* player2.playerBoard.placeShip(player2.patrolBoat, 0, 0, "vertical");
     player2.playerBoard.placeShip(player2.submarine, 4, 7, "vertical");
     player2.playerBoard.placeShip(player2.destroyer, 5, 1, "horizontal");
     player2.playerBoard.placeShip(player2.battleship, 2, 2, "vertical");
-    player2.playerBoard.placeShip(player2.carrier, 5, 5, "horizontal");
+    player2.playerBoard.placeShip(player2.carrier, 5, 5, "horizontal"); */
   }
 
   function attack(e) {
