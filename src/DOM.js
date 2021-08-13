@@ -3,6 +3,7 @@ const DOM = (() => {
   const playerBoard = document.querySelector(".player-info__board");
   const gameBoard = document.querySelector(".game-area__gameboard");
   const message = document.querySelector(".message-area__message");
+  const playAgain = document.querySelector(".message-area__button");
 
   function displayPlayerBoard() {
     for (let i = 0; i < 10; i++) {
@@ -72,9 +73,11 @@ const DOM = (() => {
   }
 
   function displayPlayerMiss(x, y) {
+    console.log(x, y);
     const space = document.querySelector(
       `.player-info__player-space[data-x='${x}'][data-y='${y}']`
     );
+    console.log(space);
     space.classList.add("player-info__player-space--miss");
     message.innerText = "Opponnent missed!";
   }
@@ -91,9 +94,31 @@ const DOM = (() => {
   function displayWinner(winner) {
     if (winner === "player") {
       message.innerText = "You won!";
-      return;
+    } else {
+      message.innerText = "Computer defeated you!";
     }
-    message.innerText = "Computer defeated you!";
+
+    playAgain.classList.add("message-area__button--visible");
+  }
+
+  function clearMessage() {
+    message.innerText = "";
+    playAgain.classList.remove("message-area__button--visible");
+  }
+
+  function clearBoards() {
+    for (let i = 0; i < 100; i++) {
+      gameBoard.children[i].classList.remove(
+        "game-area__gameboard-space--hit",
+        "game-area__gameboard-space--miss"
+      );
+      gameBoard.children[i].innerText = "";
+      playerBoard.children[i].classList.remove(
+        "player-info__player-space--filled",
+        "player-info__player-space--hit",
+        "player-info__player-space--miss"
+      );
+    }
   }
 
   displayPlayerBoard();
@@ -107,6 +132,8 @@ const DOM = (() => {
     displayPlayerMiss,
     displayWinner,
     displaySunkShip,
+    clearMessage,
+    clearBoards,
   };
 })();
 

@@ -12,6 +12,7 @@ const DOM = (() => {
   const playerBoard = document.querySelector(".player-info__board");
   const gameBoard = document.querySelector(".game-area__gameboard");
   const message = document.querySelector(".message-area__message");
+  const playAgain = document.querySelector(".message-area__button");
 
   function displayPlayerBoard() {
     for (let i = 0; i < 10; i++) {
@@ -81,9 +82,11 @@ const DOM = (() => {
   }
 
   function displayPlayerMiss(x, y) {
+    console.log(x, y);
     const space = document.querySelector(
       `.player-info__player-space[data-x='${x}'][data-y='${y}']`
     );
+    console.log(space);
     space.classList.add("player-info__player-space--miss");
     message.innerText = "Opponnent missed!";
   }
@@ -100,9 +103,31 @@ const DOM = (() => {
   function displayWinner(winner) {
     if (winner === "player") {
       message.innerText = "You won!";
-      return;
+    } else {
+      message.innerText = "Computer defeated you!";
     }
-    message.innerText = "Computer defeated you!";
+
+    playAgain.classList.add("message-area__button--visible");
+  }
+
+  function clearMessage() {
+    message.innerText = "";
+    playAgain.classList.remove("message-area__button--visible");
+  }
+
+  function clearBoards() {
+    for (let i = 0; i < 100; i++) {
+      gameBoard.children[i].classList.remove(
+        "game-area__gameboard-space--hit",
+        "game-area__gameboard-space--miss"
+      );
+      gameBoard.children[i].innerText = "";
+      playerBoard.children[i].classList.remove(
+        "player-info__player-space--filled",
+        "player-info__player-space--hit",
+        "player-info__player-space--miss"
+      );
+    }
   }
 
   displayPlayerBoard();
@@ -116,6 +141,8 @@ const DOM = (() => {
     displayPlayerMiss,
     displayWinner,
     displaySunkShip,
+    clearMessage,
+    clearBoards,
   };
 })();
 
@@ -216,18 +243,23 @@ const Player = () => {
   const turnResults = [];
   let assumedDirection;
 
+  let foundHit;
+  let direction;
+  let directionConfirmed;
+
   const attackBoard = (enemyBoard, x, y) => {
     const result = enemyBoard.recieveAttack(x, y);
     return result;
   };
 
   const randomCoords = () => {
+    let X;
+    let Y;
     do {
       X = randomInt();
       Y = randomInt();
     } while (moves.some((move) => move.x === X && move.y === Y));
     moves.push({ x: X, y: Y });
-
     return { x: X, y: Y };
   };
 
@@ -251,11 +283,160 @@ const Player = () => {
     return { x: ofThisSquare.x + 1, y: ofThisSquare.y };
   };
 
+  const trySquaresAroundHit = (hit) => {
+    if (
+      hit.x + 1 < 10 &&
+      !moves.some((move) => move.x === hit.x + 1 && move.y === hit.y)
+    ) {
+      direction = "right";
+      return trySquareToRight(hit);
+    }
+    if (
+      hit.y + 1 < 10 &&
+      !moves.some((move) => move.x === hit.x && move.y === hit.y + 1)
+    ) {
+      direction = "down";
+      return trySquareToBottom(hit);
+    }
+    if (
+      hit.x - 1 >= 0 &&
+      !moves.some((move) => move.x === hit.x - 1 && move.y === hit.y)
+    ) {
+      direction = "left";
+      return trySquareToLeft(hit);
+    }
+    if (
+      hit.y - 1 >= 0 &&
+      !moves.some((move) => move.x === hit.x && move.y === hit.y - 1)
+    ) {
+      direction = "up";
+      return trySquareToTop(hit);
+    }
+
+    return randomCoords();
+  };
+
   const generateCoordinates = () => {
+    let lastTurn = turnResults[turnResults.length - 1];
+    let lastMove = moves[moves.length - 1];
+    console.log(lastTurn);
+    console.log(lastMove);
+    if (lastTurn instanceof Object) {
+      // reset variables once ship is finally sank
+      foundHit = null;
+      direction = null;
+      directionConfirmed = false;
+      return randomCoords();
+    }
+
+    if (lastTurn === "hit" && !foundHit) {
+      foundHit = lastMove; // store coords whenever ship is first hit
+      // ship was just found, so try to find out which direction it is oriented
+      return trySquaresAroundHit(foundHit);
+    }
+
+    if (lastTurn === "hit" && direction) {
+      // we found a hit, and we found the direction
+      directionConfirmed = true;
+      // there were two hits in a row
+      // keep trying in that direction
+      if (
+        direction === "right" &&
+        lastMove.x + 1 < 10 &&
+        !moves.some(
+          (move) => move.x === lastMove.x + 1 && move.y === lastMove.y
+        )
+      ) {
+        return trySquareToRight(lastMove);
+      }
+      if (
+        direction === "down" &&
+        lastMove.y + 1 < 10 &&
+        !moves.some(
+          (move) => move.x === lastMove.x && move.y === lastMove.y + 1
+        )
+      ) {
+        return trySquareToBottom(lastMove);
+      }
+      if (
+        direction === "left" &&
+        lastMove.x - 1 >= 0 &&
+        !moves.some(
+          (move) => move.x === lastMove.x - 1 && move.y === lastMove.y
+        )
+      ) {
+        return trySquareToLeft(lastMove);
+      }
+      if (
+        direction === "up" &&
+        lastMove.y - 1 >= 0 &&
+        !moves.some(
+          (move) => move.x === lastMove.x && move.y === lastMove.y - 1
+        )
+      ) {
+        return trySquareToTop(lastMove);
+      }
+      return trySquaresAroundHit(foundHit);
+    }
+
+    if (lastTurn === "miss" && foundHit && !directionConfirmed) {
+      // we found a hit, but the direction we tried didn't work
+      // try new direction
+      return trySquaresAroundHit(foundHit);
+    }
+
+    if (lastTurn === "miss" && directionConfirmed) {
+      // try opposit direction starting from foundHit
+      if (
+        direction === "right" &&
+        foundHit.x - 1 >= 0 &&
+        !moves.some(
+          (move) => move.x === foundHit.x - 1 && move.y === foundHit.y
+        )
+      ) {
+        direction = "left";
+        return trySquareToLeft(foundHit);
+      }
+      if (
+        direction === "down" &&
+        foundHit.y - 1 >= 0 &&
+        !moves.some(
+          (move) => move.x === foundHit.x && move.y === foundHit.y - 1
+        )
+      ) {
+        direction = "up";
+        return trySquareToTop(foundHit);
+      }
+      if (
+        direction === "left" &&
+        foundHit.x + 1 < 10 &&
+        !moves.some(
+          (move) => move.x === foundHit.x + 1 && move.y === foundHit.y
+        )
+      ) {
+        direction = "right";
+        return trySquareToRight(foundHit);
+      }
+      if (
+        direction === "up" &&
+        foundHit.y + 1 < 10 &&
+        !moves.some(
+          (move) => move.x === foundHit.x && move.y === foundHit.y + 1
+        )
+      ) {
+        direciton = "down";
+        return trySquareToBottom(foundHit);
+      }
+    }
+
+    return randomCoords();
+  };
+
+  /* const generateCoordinates = () => {
     const length = turnResults.length;
     let lastHit;
 
-    if (turnResults[length - 1] instanceof Object) {
+    if (turnResults[length - 1] instanceof Object) { a
       asummedDirection = null;
       return randomCoords();
     }
@@ -411,7 +592,7 @@ const Player = () => {
     }
     assumedDirection = null;
     return randomCoords();
-  };
+  }; */
 
   const randomInt = () => {
     return Math.floor(
@@ -478,8 +659,6 @@ module.exports = Ship;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Player = __webpack_require__(/*! ./Player.js */ "./src/Player.js");
-const Gameboard = __webpack_require__(/*! ./Gameboard.js */ "./src/Gameboard.js");
-const Ship = __webpack_require__(/*! ./Ship.js */ "./src/Ship.js");
 const DOM = __webpack_require__(/*! ./DOM.js */ "./src/DOM.js");
 
 const app = (() => {
@@ -489,8 +668,8 @@ const app = (() => {
   // Event Handlers
   enemySpaces.forEach((space) => space.addEventListener("click", attack));
 
-  const player1 = Player();
-  const player2 = Player();
+  let player1 = Player();
+  let player2 = Player();
   let turn = 1;
   // player 1 places ships
   // player 2 places ships
@@ -543,7 +722,7 @@ const app = (() => {
     if (result === "miss") {
       DOM.displayMiss(xCoord, yCoord);
     }
-    if (turn >= 34) {
+    if (turn >= 33) {
       if (player2.playerBoard.allSunk()) {
         gameOver("player"); // p1 wins
         return;
@@ -568,7 +747,7 @@ const app = (() => {
       DOM.displayPlayerMiss(AICoords.x, AICoords.y);
     }
     player2.turnResults.push(AIResult);
-    if (turn >= 34) {
+    if (turn >= 33) {
       if (player1.playerBoard.allSunk()) {
         gameOver("computer"); // p2 wins
         return;
@@ -580,19 +759,27 @@ const app = (() => {
   function gameOver(winner) {
     DOM.displayWinner(winner);
     enemySpaces.forEach((space) => space.removeEventListener("click", attack));
+    document
+      .querySelector(".message-area__button")
+      .addEventListener("click", resetGame);
   }
 
-  // even turns are player 2
-  // 34 turns minimum before win condition could be met
-  // player selects space
-  // returns hit or miss
-  // DOM displays result
-  // "sink ship" if applicable
-  // DOM displays sunked ship
-  // if turn >= 34, check if game over
-  // if game over, display winner
-  // click to restart game
-  //  reset turns, reset players, place ships, start the flow again
+  function resetGame() {
+    DOM.clearMessage();
+    DOM.clearBoards();
+
+    enemySpaces.forEach((space) => {
+      space.classList.remove(
+        "game-area__gameboard-space--hit",
+        "game-area__gameboard-space--miss"
+      );
+      space.addEventListener("click", attack);
+    });
+    player1 = Player();
+    player2 = Player();
+    turn = 1;
+    placeShips();
+  }
 
   placeShips();
 })();

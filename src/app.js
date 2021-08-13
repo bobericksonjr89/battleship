@@ -1,6 +1,4 @@
 const Player = require("./Player.js");
-const Gameboard = require("./Gameboard.js");
-const Ship = require("./Ship.js");
 const DOM = require("./DOM.js");
 
 const app = (() => {
@@ -10,8 +8,8 @@ const app = (() => {
   // Event Handlers
   enemySpaces.forEach((space) => space.addEventListener("click", attack));
 
-  const player1 = Player();
-  const player2 = Player();
+  let player1 = Player();
+  let player2 = Player();
   let turn = 1;
   // player 1 places ships
   // player 2 places ships
@@ -64,7 +62,7 @@ const app = (() => {
     if (result === "miss") {
       DOM.displayMiss(xCoord, yCoord);
     }
-    if (turn >= 34) {
+    if (turn >= 33) {
       if (player2.playerBoard.allSunk()) {
         gameOver("player"); // p1 wins
         return;
@@ -89,7 +87,7 @@ const app = (() => {
       DOM.displayPlayerMiss(AICoords.x, AICoords.y);
     }
     player2.turnResults.push(AIResult);
-    if (turn >= 34) {
+    if (turn >= 33) {
       if (player1.playerBoard.allSunk()) {
         gameOver("computer"); // p2 wins
         return;
@@ -101,19 +99,27 @@ const app = (() => {
   function gameOver(winner) {
     DOM.displayWinner(winner);
     enemySpaces.forEach((space) => space.removeEventListener("click", attack));
+    document
+      .querySelector(".message-area__button")
+      .addEventListener("click", resetGame);
   }
 
-  // even turns are player 2
-  // 34 turns minimum before win condition could be met
-  // player selects space
-  // returns hit or miss
-  // DOM displays result
-  // "sink ship" if applicable
-  // DOM displays sunked ship
-  // if turn >= 34, check if game over
-  // if game over, display winner
-  // click to restart game
-  //  reset turns, reset players, place ships, start the flow again
+  function resetGame() {
+    DOM.clearMessage();
+    DOM.clearBoards();
+
+    enemySpaces.forEach((space) => {
+      space.classList.remove(
+        "game-area__gameboard-space--hit",
+        "game-area__gameboard-space--miss"
+      );
+      space.addEventListener("click", attack);
+    });
+    player1 = Player();
+    player2 = Player();
+    turn = 1;
+    placeShips();
+  }
 
   placeShips();
 })();
