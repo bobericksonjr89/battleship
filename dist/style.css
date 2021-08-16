@@ -51,6 +51,22 @@ html {
   display: flex;
 }
 
+button {
+  height: 4rem;
+  width: 12rem;
+  font-size: 2rem;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: transform 200ms ease-in-out;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
 /*-------------------
     header
 -------------------*/
@@ -67,6 +83,142 @@ html {
 }
 
 /*-------------------
+    place-ships
+-------------------*/
+
+.place-ships {
+  width: 25%;
+  min-width: 25.625rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.place-ships--hidden {
+  display: none;
+}
+
+.ship--activated {
+  transform: scale(1.1);
+}
+
+.ship--deactivated {
+  cursor: not-allowed;
+}
+
+.ship--disabled {
+  background-color: white;
+  cursor: initial;
+}
+
+.ship--deactivated.ship:hover {
+  transform: none;
+}
+
+.place-ships__board {
+  border: 1px solid black;
+  border-collapse: collapse;
+  width: 91%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.place-ships__board--hidden {
+  display: none;
+}
+
+.place-ships__board-space {
+  border: 1px solid black;
+  min-width: 5rem;
+  width: 10%;
+  min-height: 5rem;
+  cursor: pointer;
+  font-size: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.place-ships__board-space--filled {
+  background-color: black;
+}
+
+.place-ships__board-space--placed {
+  background-color: black;
+}
+
+.direction-button {
+  border-radius: 1.875 rem;
+  overflow: hidden;
+  width: 15rem;
+  text-align: center;
+  color: black;
+  font-size: 1.3rem;
+  position: relative;
+  padding-right: 7.5rem;
+  position: relative;
+}
+
+.direction-button:before {
+  color: black;
+  content: "Vertical";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 7.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.direction-button-checkbox {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 2;
+}
+
+.direction-button-checkbox:checked + .direction-button-label:before {
+  transform: translateX(120px);
+  transition: transform 300ms linear;
+}
+
+.direction-button-checkbox + .direction-button-label {
+  position: relative;
+  padding: 0.938rem 0;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+.direction-button-checkbox + .direction-button-label:before {
+  content: "";
+  background: rgb(199, 199, 199);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 30px;
+  transform: translateX(0);
+  transition: transform 300ms;
+}
+.direction-button-checkbox
+  + .direction-button-label
+  .direction-button-label-span {
+  position: relative;
+}
+
+/*-------------------
     player-info
 -------------------*/
 
@@ -77,6 +229,10 @@ html {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+.player-info--hidden {
+  display: none;
 }
 
 .player-info__turn {
@@ -131,6 +287,10 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.game-area--hidden {
+  display: none;
 }
 
 .game-area__gameboard {

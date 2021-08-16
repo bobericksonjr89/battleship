@@ -15,11 +15,9 @@ const Gameboard = () => {
       }
       for (let i = 0; i < shipLength; i++) {
         if (board[x + i][y]) {
-          // my bug...it's placing parts of ships bc returning false only after some squares are placed
           return false;
         }
       }
-
       for (let i = 0; i < shipLength; i++) {
         board[x + i][y] = ship;
       }
