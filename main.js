@@ -9,10 +9,26 @@
 
 const DOM = (() => {
   // DOM capture
+  const placeShips = document.querySelector(".place-ships");
+  const playerInfo = document.querySelector(".player-info");
+  const gameArea = document.querySelector(".game-area");
+  const placeBoard = document.querySelector(".place-ships__board");
   const playerBoard = document.querySelector(".player-info__board");
   const gameBoard = document.querySelector(".game-area__gameboard");
   const message = document.querySelector(".message-area__message");
   const playAgain = document.querySelector(".message-area__button");
+
+  function displayPlaceShipsBoard() {
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        let gameSpace = document.createElement("div");
+        gameSpace.classList.add("place-ships__board-space");
+        gameSpace.dataset.x = j;
+        gameSpace.dataset.y = i;
+        placeBoard.appendChild(gameSpace);
+      }
+    }
+  }
 
   function displayPlayerBoard() {
     for (let i = 0; i < 10; i++) {
@@ -36,6 +52,100 @@ const DOM = (() => {
         gameBoard.appendChild(gameSpace);
       }
     }
+  }
+
+  function addDeactivatedClass(ships) {
+    ships.forEach((ship) => ship.classList.add("ship--deactivated"));
+  }
+
+  function addActivatedClass(ship) {
+    ship.classList.add("ship--activated");
+  }
+
+  function resetShipButtons(ships) {
+    console.log(ships);
+    ships.forEach((ship) =>
+      ship.classList.remove("ship--activated", "ship--deactivated")
+    );
+  }
+
+  function clearFilledSpaces() {
+    let placeSpace;
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        placeSpace = document.querySelector(
+          `.place-ships__board-space[data-x='${j}'][data-y='${i}']`
+        );
+        placeSpace.classList.remove("place-ships__board-space--filled");
+      }
+    }
+  }
+
+  function displayHover(ship, x, y, direction) {
+    let placeSpace;
+    x = parseInt(x);
+    y = parseInt(y);
+    clearFilledSpaces();
+
+    if (direction === "horizontal" && x + ship.length - 1 < 10) {
+      for (let i = 0; i < ship.length; i++) {
+        placeSpace = document.querySelector(
+          `.place-ships__board-space[data-x='${x + i}'][data-y='${y}']`
+        );
+        placeSpace.classList.add("place-ships__board-space--filled");
+      }
+      return;
+    }
+    if (direction === "vertical" && y + ship.length - 1 < 10) {
+      for (let i = 0; i < ship.length; i++) {
+        placeSpace = document.querySelector(
+          `.place-ships__board-space[data-x='${x}'][data-y='${y + i}']`
+        );
+        placeSpace.classList.add("place-ships__board-space--filled");
+      }
+    }
+  }
+
+  function savePlayerHover(ship, x, y, direction) {
+    let placeSpace;
+    x = parseInt(x);
+    y = parseInt(y);
+    clearFilledSpaces();
+
+    if (direction === "horizontal" && x + ship.length < 10) {
+      for (let i = 0; i < ship.length; i++) {
+        placeSpace = document.querySelector(
+          `.place-ships__board-space[data-x='${x + i}'][data-y='${y}']`
+        );
+        placeSpace.classList.add("place-ships__board-space--placed");
+      }
+      return;
+    }
+    if (direction === "vertical" && y + ship.length < 10) {
+      for (let i = 0; i < ship.length; i++) {
+        placeSpace = document.querySelector(
+          `.place-ships__board-space[data-x='${x}'][data-y='${y + i}']`
+        );
+        placeSpace.classList.add("place-ships__board-space--placed");
+      }
+    }
+  }
+
+  function disableButton(button) {
+    button.disabled = true;
+    button.classList.add("ship--disabled");
+  }
+
+  function resetButton(button) {
+    button.disabled = false;
+    button.classList.remove("ship--disabled");
+  }
+
+  function togglePlaceShipsToGame() {
+    placeShips.classList.toggle("place-ships--hidden");
+    placeBoard.classList.toggle("place-ships__board--hidden");
+    playerInfo.classList.toggle("player-info--hidden");
+    gameArea.classList.toggle("game-area--hidden");
   }
 
   function colorPlayerSpace(boat, x, y, direction) {
@@ -127,13 +237,26 @@ const DOM = (() => {
         "player-info__player-space--hit",
         "player-info__player-space--miss"
       );
+      placeBoard.children[i].classList.remove(
+        "place-ships__board-space--placed"
+      );
     }
   }
 
+  displayPlaceShipsBoard();
   displayPlayerBoard();
   displayGameBoard();
 
   return {
+    resetButton,
+    togglePlaceShipsToGame,
+    disableButton,
+    savePlayerHover,
+    clearFilledSpaces,
+    displayHover,
+    resetShipButtons,
+    addDeactivatedClass,
+    addActivatedClass,
     colorPlayerSpace,
     displayHit,
     displayMiss,
@@ -174,11 +297,9 @@ const Gameboard = () => {
       }
       for (let i = 0; i < shipLength; i++) {
         if (board[x + i][y]) {
-          // my bug...it's placing parts of ships bc returning false only after some squares are placed
           return false;
         }
       }
-
       for (let i = 0; i < shipLength; i++) {
         board[x + i][y] = ship;
       }
@@ -526,22 +647,116 @@ module.exports = Ship;
 
 const Player = __webpack_require__(/*! ./Player.js */ "./src/Player.js");
 const DOM = __webpack_require__(/*! ./DOM.js */ "./src/DOM.js");
+const { displayHover } = __webpack_require__(/*! ./DOM.js */ "./src/DOM.js");
 
 const app = (() => {
   // DOM Capture
+  const shipButtons = document.querySelectorAll(".ship");
+  const directionButton = document.querySelector(".direction-button-checkbox");
+  const placeShipSpaces = document.querySelectorAll(
+    ".place-ships__board-space"
+  );
   const enemySpaces = document.querySelectorAll(".game-area__gameboard-space");
+  const startButton = document.querySelector(".place-ships__start-game");
 
   // Event Handlers
-  enemySpaces.forEach((space) => space.addEventListener("click", attack));
+  shipButtons.forEach((button) =>
+    button.addEventListener("click", selectShipButton)
+  );
+
+  startButton.addEventListener("click", startGame);
 
   let player1 = Player();
+
   let player2 = Player();
   let turn = 1;
-  // player 1 places ships
-  // player 2 places ships
-  // (preselected for now...)
-  function placeShips() {
-    player1.playerBoard.placeShip(player1.patrolBoat, 2, 4, "vertical");
+  let shipsPlaced = 0;
+
+  function startGame() {
+    if (shipsPlaced !== 5) {
+      return;
+    }
+    DOM.togglePlaceShipsToGame();
+    enemySpaces.forEach((space) => space.addEventListener("click", attack));
+  }
+
+  function selectShipButton(e) {
+    const shipButtonArray = [...shipButtons];
+    const otherButtons = shipButtonArray.filter(
+      (button) => button !== e.target
+    );
+    const player1Ships = {
+      patrol: player1.patrolBoat,
+      submarine: player1.submarine,
+      destroyer: player1.destroyer,
+      battleship: player1.battleship,
+      carrier: player1.carrier,
+    };
+    const ship = player1Ships[e.target.dataset.ship];
+    console.log(ship);
+
+    const savePlaceShip = (event) => {
+      const x = parseInt(event.target.dataset.x);
+      const y = parseInt(event.target.dataset.y);
+      const direction = getDirection();
+      console.log(ship, x, y, direction);
+      let result = player1.playerBoard.placeShip(ship, x, y, direction);
+      if (result === true) {
+        DOM.colorPlayerSpace(ship, x, y, direction);
+        DOM.savePlayerHover(ship, x, y, direction);
+        DOM.resetShipButtons(shipButtons);
+        otherButtons.forEach((button) =>
+          button.addEventListener("click", selectShipButton)
+        );
+        DOM.disableButton(e.target);
+        placeShipSpaces.forEach((space) => {
+          space.removeEventListener("click", savePlaceShip);
+          space.removeEventListener("mouseover", hoverEvent);
+        });
+        shipsPlaced++;
+      }
+    };
+
+    const hoverEvent = (e) => {
+      DOM.displayHover(
+        ship,
+        e.target.dataset.x,
+        e.target.dataset.y,
+        getDirection()
+      );
+    };
+
+    DOM.clearFilledSpaces();
+
+    if (e.target.classList.contains("ship--activated")) {
+      DOM.resetShipButtons(shipButtons);
+      otherButtons.forEach((button) =>
+        button.addEventListener("click", selectShipButton)
+      );
+      return;
+    }
+
+    otherButtons.forEach((button) =>
+      button.removeEventListener("click", selectShipButton)
+    );
+    DOM.addActivatedClass(e.target);
+    DOM.addDeactivatedClass(otherButtons);
+    placeShipSpaces.forEach((space) => {
+      space.addEventListener("mouseover", hoverEvent);
+      space.addEventListener("click", savePlaceShip);
+    });
+  }
+
+  function getDirection() {
+    if (directionButton.checked === false) {
+      return "horizontal";
+    } else {
+      return "vertical";
+    }
+  }
+
+  function placeAIShips() {
+    /*     player1.playerBoard.placeShip(player1.patrolBoat, 2, 4, "vertical");
     DOM.colorPlayerSpace(player1.patrolBoat, 2, 4, "vertical");
     player1.playerBoard.placeShip(player1.submarine, 1, 0, "horizontal");
     DOM.colorPlayerSpace(player1.submarine, 1, 0, "horizontal");
@@ -550,13 +765,13 @@ const app = (() => {
     player1.playerBoard.placeShip(player1.battleship, 4, 4, "vertical");
     DOM.colorPlayerSpace(player1.battleship, 4, 4, "vertical");
     player1.playerBoard.placeShip(player1.carrier, 1, 2, "horizontal");
-    DOM.colorPlayerSpace(player1.carrier, 1, 2, "horizontal");
+    DOM.colorPlayerSpace(player1.carrier, 1, 2, "horizontal"); */
 
     const AIShips = [
-      player2.patrolBoat,
+      /*       player2.patrolBoat,
       player2.submarine,
       player2.destroyer,
-      player2.battleship,
+      player2.battleship, */
       player2.carrier,
     ];
     player2.playerBoard.placeShipsRandomly(AIShips);
@@ -642,21 +857,16 @@ const app = (() => {
   function resetGame() {
     DOM.clearMessage();
     DOM.clearBoards();
-
-    enemySpaces.forEach((space) => {
-      space.classList.remove(
-        "game-area__gameboard-space--hit",
-        "game-area__gameboard-space--miss"
-      );
-      space.addEventListener("click", attack);
-    });
+    DOM.togglePlaceShipsToGame();
+    shipButtons.forEach((button) => DOM.resetButton(button));
     player1 = Player();
     player2 = Player();
     turn = 1;
-    placeShips();
+    shipsPlaced = 0;
+    placeAIShips();
   }
 
-  placeShips();
+  placeAIShips();
 })();
 
 module.exports = app;

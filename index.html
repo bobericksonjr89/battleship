@@ -12,14 +12,38 @@
       <h1 class="header__header">Battleship</h1>
     </header>
     <main class="main">
-      <div class="player-info">
+      <div class="place-ships">
+        <button class="ship" data-ship="patrol" data-spaces="2">Patrol</button>
+        <button class="ship" data-ship="submarine" data-spaces="3">
+          Submarine
+        </button>
+        <button class="ship" data-ship="destroyer" data-spaces="3">
+          Destroyer
+        </button>
+        <button class="ship" data-ship="battleship" data-spaces="4">
+          Battleship
+        </button>
+        <button class="ship" data-ship="carrier" data-spaces="5">
+          Carrier
+        </button>
+        <div class="direction-button">
+          <input class="direction-button-checkbox" type="checkbox" />
+          <label class="direction-button-label" for=""
+            ><span class="direction-button-label-span">Horizontal</span></label
+          >
+        </div>
+        <button class="place-ships__start-game">Start Game</button>
+      </div>
+      <div class="place-ships__board"></div>
+
+      <div class="player-info player-info--hidden">
         <p class="player-info__turn">Your turn!</p>
         <div class="player-info__board-info">
           <h3 class="player-info__ships">Your Ships</h3>
           <div class="player-info__board"></div>
         </div>
       </div>
-      <div class="game-area">
+      <div class="game-area game-area--hidden">
         <div class="game-area__gameboard"></div>
       </div>
 
