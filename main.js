@@ -611,7 +611,6 @@ const Ship = (length, name) => {
   const hit = () => {
     if (!isSunk()) {
       health--;
-      console.log(health);
       return true;
     }
     return false;
@@ -668,9 +667,10 @@ const app = (() => {
     battleship: player1.battleship,
     carrier: player1.carrier,
   };
-
+  window.player1 = player1;
   let player2 = Player();
-  const AIShips = [
+  window.player2 = player2;
+  let AIShips = [
     player2.patrolBoat,
     player2.submarine,
     player2.destroyer,
@@ -835,8 +835,24 @@ const app = (() => {
     DOM.clearBoards();
     DOM.togglePlaceShipsToGame();
     shipButtons.forEach((button) => DOM.resetButton(button));
+    player1 = null;
     player1 = Player();
+    window.player1 = player1;
+    player2 = null;
     player2 = Player();
+    window.player2 = player2;
+    console.log(
+      player2.battleship.health,
+      player2.battleship.isSunk(),
+      player2.battleship
+    );
+    AIShips = [
+      player2.patrolBoat,
+      player2.submarine,
+      player2.destroyer,
+      player2.battleship,
+      player2.carrier,
+    ];
     turn = 1;
     shipsPlaced = 0;
     placeAIShips();
