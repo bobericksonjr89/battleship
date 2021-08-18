@@ -266,7 +266,6 @@ button:hover {
 }
 
 .player-info__board {
-  border: 1px solid black;
   width: 20.125rem;
   display: flex;
   flex-wrap: wrap;
@@ -311,7 +310,7 @@ button:hover {
 .game-area__gameboard {
   border: 2px solid black;
   border-collapse: collapse;
-  width: 91%;
+  width: 50.25rem;
   display: flex;
   flex-wrap: wrap;
 }
@@ -320,7 +319,7 @@ button:hover {
   user-select: none;
   border: 2px solid black;
   min-width: 5rem;
-  width: 10%;
+  width: 5rem;
   height: 5rem;
   cursor: pointer;
   font-size: 6rem;
