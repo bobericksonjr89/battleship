@@ -54,7 +54,6 @@ const DOM = (() => {
   }
 
   function resetShipButtons(ships) {
-    console.log(ships);
     ships.forEach((ship) =>
       ship.classList.remove("ship--activated", "ship--deactivated")
     );
@@ -103,7 +102,7 @@ const DOM = (() => {
     y = parseInt(y);
     clearFilledSpaces();
 
-    if (direction === "horizontal" && x + ship.length < 10) {
+    if (direction === "horizontal" && x + ship.length - 1 < 10) {
       for (let i = 0; i < ship.length; i++) {
         placeSpace = document.querySelector(
           `.place-ships__board-space[data-x='${x + i}'][data-y='${y}']`
@@ -112,7 +111,7 @@ const DOM = (() => {
       }
       return;
     }
-    if (direction === "vertical" && y + ship.length < 10) {
+    if (direction === "vertical" && y + ship.length - 1 < 10) {
       for (let i = 0; i < ship.length; i++) {
         placeSpace = document.querySelector(
           `.place-ships__board-space[data-x='${x}'][data-y='${y + i}']`
@@ -183,11 +182,9 @@ const DOM = (() => {
   }
 
   function displayPlayerMiss(x, y) {
-    console.log(x, y);
     const space = document.querySelector(
       `.player-info__player-space[data-x='${x}'][data-y='${y}']`
     );
-    console.log(space);
     space.classList.add("player-info__player-space--miss");
     message.innerText = "Opponnent missed!";
   }

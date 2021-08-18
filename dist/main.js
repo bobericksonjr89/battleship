@@ -63,7 +63,6 @@ const DOM = (() => {
   }
 
   function resetShipButtons(ships) {
-    console.log(ships);
     ships.forEach((ship) =>
       ship.classList.remove("ship--activated", "ship--deactivated")
     );
@@ -112,7 +111,7 @@ const DOM = (() => {
     y = parseInt(y);
     clearFilledSpaces();
 
-    if (direction === "horizontal" && x + ship.length < 10) {
+    if (direction === "horizontal" && x + ship.length - 1 < 10) {
       for (let i = 0; i < ship.length; i++) {
         placeSpace = document.querySelector(
           `.place-ships__board-space[data-x='${x + i}'][data-y='${y}']`
@@ -121,7 +120,7 @@ const DOM = (() => {
       }
       return;
     }
-    if (direction === "vertical" && y + ship.length < 10) {
+    if (direction === "vertical" && y + ship.length - 1 < 10) {
       for (let i = 0; i < ship.length; i++) {
         placeSpace = document.querySelector(
           `.place-ships__board-space[data-x='${x}'][data-y='${y + i}']`
@@ -192,11 +191,9 @@ const DOM = (() => {
   }
 
   function displayPlayerMiss(x, y) {
-    console.log(x, y);
     const space = document.querySelector(
       `.player-info__player-space[data-x='${x}'][data-y='${y}']`
     );
-    console.log(space);
     space.classList.add("player-info__player-space--miss");
     message.innerText = "Opponnent missed!";
   }
@@ -323,7 +320,6 @@ const Gameboard = () => {
   };
 
   const placeShipsRandomly = (ships) => {
-    console.log(ships);
     let result;
     let x;
     let y;
@@ -333,9 +329,7 @@ const Gameboard = () => {
         x = randomInt();
         y = randomInt();
         direction = randomInt() <= 4 ? "horizontal" : "vertical";
-        console.log(ship, x, y, direction);
         result = placeShip(ship, x, y, direction);
-        console.log(ships);
       } while (result === false);
     });
   };
@@ -535,7 +529,7 @@ const Player = () => {
     }
 
     if (lastTurn === "miss" && directionConfirmed) {
-      // try opposit direction starting from foundHit
+      // try opposite direction starting from foundHit
       if (
         direction === "right" &&
         foundHit.x - 1 >= 0 &&
@@ -667,8 +661,22 @@ const app = (() => {
   startButton.addEventListener("click", startGame);
 
   let player1 = Player();
+  const player1Ships = {
+    patrol: player1.patrolBoat,
+    submarine: player1.submarine,
+    destroyer: player1.destroyer,
+    battleship: player1.battleship,
+    carrier: player1.carrier,
+  };
 
   let player2 = Player();
+  const AIShips = [
+    player2.patrolBoat,
+    player2.submarine,
+    player2.destroyer,
+    player2.battleship,
+    player2.carrier,
+  ];
   let turn = 1;
   let shipsPlaced = 0;
 
@@ -685,21 +693,13 @@ const app = (() => {
     const otherButtons = shipButtonArray.filter(
       (button) => button !== e.target
     );
-    const player1Ships = {
-      patrol: player1.patrolBoat,
-      submarine: player1.submarine,
-      destroyer: player1.destroyer,
-      battleship: player1.battleship,
-      carrier: player1.carrier,
-    };
-    const ship = player1Ships[e.target.dataset.ship];
-    console.log(ship);
+
+    const ship = player1[e.target.dataset.ship];
 
     const savePlaceShip = (event) => {
       const x = parseInt(event.target.dataset.x);
       const y = parseInt(event.target.dataset.y);
       const direction = getDirection();
-      console.log(ship, x, y, direction);
       let result = player1.playerBoard.placeShip(ship, x, y, direction);
       if (result === true) {
         DOM.colorPlayerSpace(ship, x, y, direction);
@@ -756,31 +756,7 @@ const app = (() => {
   }
 
   function placeAIShips() {
-    /*     player1.playerBoard.placeShip(player1.patrolBoat, 2, 4, "vertical");
-    DOM.colorPlayerSpace(player1.patrolBoat, 2, 4, "vertical");
-    player1.playerBoard.placeShip(player1.submarine, 1, 0, "horizontal");
-    DOM.colorPlayerSpace(player1.submarine, 1, 0, "horizontal");
-    player1.playerBoard.placeShip(player1.destroyer, 8, 3, "vertical");
-    DOM.colorPlayerSpace(player1.destroyer, 8, 3, "vertical");
-    player1.playerBoard.placeShip(player1.battleship, 4, 4, "vertical");
-    DOM.colorPlayerSpace(player1.battleship, 4, 4, "vertical");
-    player1.playerBoard.placeShip(player1.carrier, 1, 2, "horizontal");
-    DOM.colorPlayerSpace(player1.carrier, 1, 2, "horizontal"); */
-
-    const AIShips = [
-      /*       player2.patrolBoat,
-      player2.submarine,
-      player2.destroyer,
-      player2.battleship, */
-      player2.carrier,
-    ];
     player2.playerBoard.placeShipsRandomly(AIShips);
-
-    /* player2.playerBoard.placeShip(player2.patrolBoat, 0, 0, "vertical");
-    player2.playerBoard.placeShip(player2.submarine, 4, 7, "vertical");
-    player2.playerBoard.placeShip(player2.destroyer, 5, 1, "horizontal");
-    player2.playerBoard.placeShip(player2.battleship, 2, 2, "vertical");
-    player2.playerBoard.placeShip(player2.carrier, 5, 5, "horizontal"); */
   }
 
   function attack(e) {

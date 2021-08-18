@@ -20,8 +20,22 @@ const app = (() => {
   startButton.addEventListener("click", startGame);
 
   let player1 = Player();
+  const player1Ships = {
+    patrol: player1.patrolBoat,
+    submarine: player1.submarine,
+    destroyer: player1.destroyer,
+    battleship: player1.battleship,
+    carrier: player1.carrier,
+  };
 
   let player2 = Player();
+  const AIShips = [
+    player2.patrolBoat,
+    player2.submarine,
+    player2.destroyer,
+    player2.battleship,
+    player2.carrier,
+  ];
   let turn = 1;
   let shipsPlaced = 0;
 
@@ -38,21 +52,13 @@ const app = (() => {
     const otherButtons = shipButtonArray.filter(
       (button) => button !== e.target
     );
-    const player1Ships = {
-      patrol: player1.patrolBoat,
-      submarine: player1.submarine,
-      destroyer: player1.destroyer,
-      battleship: player1.battleship,
-      carrier: player1.carrier,
-    };
-    const ship = player1Ships[e.target.dataset.ship];
-    console.log(ship);
+
+    const ship = player1[e.target.dataset.ship];
 
     const savePlaceShip = (event) => {
       const x = parseInt(event.target.dataset.x);
       const y = parseInt(event.target.dataset.y);
       const direction = getDirection();
-      console.log(ship, x, y, direction);
       let result = player1.playerBoard.placeShip(ship, x, y, direction);
       if (result === true) {
         DOM.colorPlayerSpace(ship, x, y, direction);
@@ -109,31 +115,7 @@ const app = (() => {
   }
 
   function placeAIShips() {
-    /*     player1.playerBoard.placeShip(player1.patrolBoat, 2, 4, "vertical");
-    DOM.colorPlayerSpace(player1.patrolBoat, 2, 4, "vertical");
-    player1.playerBoard.placeShip(player1.submarine, 1, 0, "horizontal");
-    DOM.colorPlayerSpace(player1.submarine, 1, 0, "horizontal");
-    player1.playerBoard.placeShip(player1.destroyer, 8, 3, "vertical");
-    DOM.colorPlayerSpace(player1.destroyer, 8, 3, "vertical");
-    player1.playerBoard.placeShip(player1.battleship, 4, 4, "vertical");
-    DOM.colorPlayerSpace(player1.battleship, 4, 4, "vertical");
-    player1.playerBoard.placeShip(player1.carrier, 1, 2, "horizontal");
-    DOM.colorPlayerSpace(player1.carrier, 1, 2, "horizontal"); */
-
-    const AIShips = [
-      /*       player2.patrolBoat,
-      player2.submarine,
-      player2.destroyer,
-      player2.battleship, */
-      player2.carrier,
-    ];
     player2.playerBoard.placeShipsRandomly(AIShips);
-
-    /* player2.playerBoard.placeShip(player2.patrolBoat, 0, 0, "vertical");
-    player2.playerBoard.placeShip(player2.submarine, 4, 7, "vertical");
-    player2.playerBoard.placeShip(player2.destroyer, 5, 1, "horizontal");
-    player2.playerBoard.placeShip(player2.battleship, 2, 2, "vertical");
-    player2.playerBoard.placeShip(player2.carrier, 5, 5, "horizontal"); */
   }
 
   function attack(e) {

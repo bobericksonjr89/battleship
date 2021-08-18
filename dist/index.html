@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Battleship</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="../images/battleship.png" />
   </head>
   <body>
     <header class="header">
@@ -13,7 +20,9 @@
     </header>
     <main class="main">
       <div class="place-ships">
-        <button class="ship" data-ship="patrol" data-spaces="2">Patrol</button>
+        <button class="ship" data-ship="patrolBoat" data-spaces="2">
+          Patrol
+        </button>
         <button class="ship" data-ship="submarine" data-spaces="3">
           Submarine
         </button>
@@ -37,7 +46,7 @@
       <div class="place-ships__board"></div>
 
       <div class="player-info player-info--hidden">
-        <p class="player-info__turn">Your turn!</p>
+        <img class="player-info__image" src="../images/battleship.png" />
         <div class="player-info__board-info">
           <h3 class="player-info__ships">Your Ships</h3>
           <div class="player-info__board"></div>
@@ -55,3 +64,5 @@
     <script src="main.js"></script>
   </body>
 </html>
+
+<!-- Favicon Image/Battleship Image by OpenClipart-Vectors from Pixabay -->

@@ -41,7 +41,6 @@ const Gameboard = () => {
   };
 
   const placeShipsRandomly = (ships) => {
-    console.log(ships);
     let result;
     let x;
     let y;
@@ -51,9 +50,7 @@ const Gameboard = () => {
         x = randomInt();
         y = randomInt();
         direction = randomInt() <= 4 ? "horizontal" : "vertical";
-        console.log(ship, x, y, direction);
         result = placeShip(ship, x, y, direction);
-        console.log(ships);
       } while (result === false);
     });
   };

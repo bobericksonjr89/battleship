@@ -155,7 +155,7 @@ const Player = () => {
     }
 
     if (lastTurn === "miss" && directionConfirmed) {
-      // try opposit direction starting from foundHit
+      // try opposite direction starting from foundHit
       if (
         direction === "right" &&
         foundHit.x - 1 >= 0 &&
