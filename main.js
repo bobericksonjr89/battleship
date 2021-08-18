@@ -659,26 +659,37 @@ const app = (() => {
 
   startButton.addEventListener("click", startGame);
 
-  let player1 = Player();
-  const player1Ships = {
-    patrol: player1.patrolBoat,
-    submarine: player1.submarine,
-    destroyer: player1.destroyer,
-    battleship: player1.battleship,
-    carrier: player1.carrier,
-  };
-  window.player1 = player1;
-  let player2 = Player();
-  window.player2 = player2;
-  let AIShips = [
-    player2.patrolBoat,
-    player2.submarine,
-    player2.destroyer,
-    player2.battleship,
-    player2.carrier,
-  ];
-  let turn = 1;
-  let shipsPlaced = 0;
+  let player1;
+  let player1Ships;
+  let player2;
+  let AIShips;
+  let turn;
+  let shipsPlaced;
+
+  function initVariables() {
+    player1 = null;
+    player1 = Player();
+    window.player1 = player1;
+    player1Ships = {
+      patrol: player1.patrolBoat,
+      submarine: player1.submarine,
+      destroyer: player1.destroyer,
+      battleship: player1.battleship,
+      carrier: player1.carrier,
+    };
+    player2 = null;
+    player2 = Player();
+    window.player2 = player2;
+    AIShips = [
+      player2.patrolBoat,
+      player2.submarine,
+      player2.destroyer,
+      player2.battleship,
+      player2.carrier,
+    ];
+    turn = 1;
+    shipsPlaced = 0;
+  }
 
   function startGame() {
     if (shipsPlaced !== 5) {
@@ -835,29 +846,11 @@ const app = (() => {
     DOM.clearBoards();
     DOM.togglePlaceShipsToGame();
     shipButtons.forEach((button) => DOM.resetButton(button));
-    player1 = null;
-    player1 = Player();
-    window.player1 = player1;
-    player2 = null;
-    player2 = Player();
-    window.player2 = player2;
-    console.log(
-      player2.battleship.health,
-      player2.battleship.isSunk(),
-      player2.battleship
-    );
-    AIShips = [
-      player2.patrolBoat,
-      player2.submarine,
-      player2.destroyer,
-      player2.battleship,
-      player2.carrier,
-    ];
-    turn = 1;
-    shipsPlaced = 0;
+    initVariables();
     placeAIShips();
   }
 
+  initVariables();
   placeAIShips();
 })();
 
