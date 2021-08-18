@@ -386,7 +386,7 @@ button:hover {
     width: 100%;
   }
   button {
-    height: 1.3rem;
+    height: 2rem;
     width: 6rem;
     font-size: 0.75rem;
   }
@@ -430,6 +430,9 @@ button:hover {
     min-height: 1.3rem;
     width: 1.3rem;
     height: 1.3rem;
+  }
+  .place-ships__start-game {
+    margin-top: 0.5rem;
   }
   .direction-button {
     width: initial;
@@ -492,7 +495,7 @@ button:hover {
 }
 @media only screen and (max-width: 23rem) {
   .place-ships {
-    transform: scale(0.65);
+    transform: scale(0.75);
   }
   .place-ships__board {
     height: 15.25rem;
