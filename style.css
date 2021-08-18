@@ -266,6 +266,7 @@ button:hover {
 }
 
 .player-info__board {
+  border: 1px solid black;
   width: 20.125rem;
   display: flex;
   flex-wrap: wrap;
@@ -310,7 +311,7 @@ button:hover {
 .game-area__gameboard {
   border: 2px solid black;
   border-collapse: collapse;
-  width: 50.25rem;
+  width: 91%;
   display: flex;
   flex-wrap: wrap;
 }
@@ -319,7 +320,7 @@ button:hover {
   user-select: none;
   border: 2px solid black;
   min-width: 5rem;
-  width: 5rem;
+  width: 10%;
   height: 5rem;
   cursor: pointer;
   font-size: 6rem;
@@ -378,27 +379,23 @@ button:hover {
 /*-------------------
     MEDIA
 -------------------*/
-/* 
+
 @media only screen and (max-width: 64rem) {
   body {
     width: 100%;
   }
-
   button {
     height: 1.3rem;
     width: 6rem;
     font-size: 0.975rem;
   }
-
   button:hover {
     transform: initial;
   }
-
   button.ship--activated {
     transform: scale(1.05);
     background-color: var(--color-red);
   }
-
   .main {
     height: initial;
     flex-wrap: wrap-reverse;
@@ -406,90 +403,73 @@ button:hover {
     width: 100%;
     padding: 0.25rem;
   }
-
   .header {
     font-size: 1.3rem;
     width: 100%;
     min-width: 6.5rem;
   }
-
   .header__header {
     font-size: 1.3rem;
   }
-
   .place-ships {
     width: 14rem;
     min-width: 13rem;
   }
-
   .ship {
     margin: 0.5rem 0;
   }
-
   .place-ships__board {
     min-width: initial;
     justify-content: center;
     margin-bottom: 1rem;
     width: 13.249rem;
   }
-
   .place-ships__board-space {
     min-width: 1.3rem;
     min-height: 1.3rem;
     width: 1.3rem;
     height: 1.3rem;
   }
-
   .direction-button {
     width: initial;
   }
-
   .direction-button:before {
     width: 7rem;
   }
-
   .direction-button-checkbox:checked + .direction-button-label:before {
     transform: translateX(6.875rem);
     transition: transform 300ms linear;
   }
-
   .player-info {
     min-width: initial;
     width: 13rem;
   }
-
   .player-info__image {
     margin-top: 0;
   }
-
   .player-info__board-info {
     margin-top: 0;
   }
-
   .player-info__board {
     height: 13.249rem;
     width: 13.249rem;
     border: 2px solid black;
   }
-
   .player-info__player-space {
     min-width: 1.3rem;
     min-height: 1.3rem;
     width: 1.3rem;
     height: 1.3rem;
   }
-
   .game-area {
     min-width: initial;
     width: 14rem;
   }
-
   .game-area__gameboard {
     height: 13.249rem;
     width: 13.249rem;
     border: 2px solid black;
   }
-
   .game-area__gameboard-space {
     border-width: 1px;
     border-collapse: collapse;
@@ -499,58 +479,48 @@ button:hover {
     height: 1.3rem;
     font-size: 0.5rem;
   }
-
   .message-area {
     width: 100%;
     min-height: 2.84375rem;
     height: initial;
     margin-bottom: 1rem;
   }
-
   .message-area__message {
     font-size: 1.3rem;
   }
 }
-
 @media only screen and (max-width: 23rem) {
   .place-ships {
-       transform: scale(0.65); 
+    transform: scale(0.65);
   }
-
   .place-ships__board {
     height: 15.25rem;
     width: 15.25rem;
     border: 2px solid black;
   }
-
   .place-ships__board-space {
     min-width: 1.5rem;
     min-height: 1.5rem;
     width: 1.5rem;
     height: 1.5rem;
   }
-
   .player-info {
     width: 15.25rem;
   }
-
   .player-info__board-info {
     width: 100%;
   }
-
   .player-info__board {
     height: 15.25rem;
     width: 15.25rem;
     border: 2px solid black;
   }
-
   .player-info__player-space {
     min-width: 1.5rem;
     min-height: 1.5rem;
     width: 1.5rem;
     height: 1.5rem;
   }
-
   .game-area__gameboard-space {
     border-width: 1px;
     min-width: 1.5rem;
@@ -559,11 +529,9 @@ button:hover {
     height: 1.5rem;
     font-size: 0.5rem;
   }
-
   .game-area__gameboard {
     height: 15.25rem;
     width: 15.25rem;
     border: 2px solid black;
   }
 }
- */
