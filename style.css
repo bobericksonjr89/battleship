@@ -45,6 +45,9 @@ img {
 html {
   --color-red: #c33124;
   --color-blue: #a1dffb;
+  --board-size: calc(50vw);
+  --board-space: calc(var(--board-size) / 10);
+
   background-color: rgb(247, 247, 247);
 }
 
@@ -129,10 +132,11 @@ button:hover {
 }
 
 .place-ships__board {
-  border: 2px solid black;
-  border-collapse: collapse;
-  width: 91%;
-  min-width: 51rem;
+  outline: 2px solid black;
+  width: var(--board-size);
+  height: var(--board-size);
+  min-width: var(--board-size);
+  min-height: var(--board-size);
   display: flex;
   flex-wrap: wrap;
 }
@@ -142,10 +146,10 @@ button:hover {
 }
 
 .place-ships__board-space {
+  border-collapse: collapse;
   border: 2px solid black;
-  min-width: 5rem;
-  width: 10%;
-  min-height: 5rem;
+  width: var(--board-space);
+  height: var(--board-space);
   cursor: pointer;
   font-size: 6rem;
   display: flex;
@@ -310,9 +314,12 @@ button:hover {
 }
 
 .game-area__gameboard {
-  border: 2px solid black;
-  border-collapse: collapse;
-  width: 91%;
+  overflow: hidden;
+  outline: 2px solid black;
+  width: var(--board-size);
+  height: var(--board-size);
+  min-width: var(--board-size);
+  min-height: var(--board-size);
   display: flex;
   flex-wrap: wrap;
 }
@@ -320,9 +327,10 @@ button:hover {
 .game-area__gameboard-space {
   user-select: none;
   border: 2px solid black;
-  min-width: 5rem;
-  width: 10%;
-  height: 5rem;
+  width: var(--board-space);
+  height: var(--board-space);
+  min-width: var(--board-space);
+  min-height: var(--board-space);
   cursor: pointer;
   font-size: 6rem;
   display: flex;
@@ -420,16 +428,14 @@ button:hover {
     margin: 0.5rem 0;
   }
   .place-ships__board {
-    min-width: initial;
+    width: 90vw;
+    height: 90vw;
     justify-content: center;
     margin-bottom: 1rem;
-    width: 13.249rem;
   }
   .place-ships__board-space {
-    min-width: 1.3rem;
-    min-height: 1.3rem;
-    width: 1.3rem;
-    height: 1.3rem;
+    width: calc(90vw / 10);
+    height: calc(90vw / 10);
   }
   .place-ships__start-game {
     margin-top: 0.5rem;
@@ -466,21 +472,16 @@ button:hover {
     height: 1.3rem;
   }
   .game-area {
-    min-width: initial;
-    width: 14rem;
   }
   .game-area__gameboard {
-    height: 13.249rem;
-    width: 13.249rem;
-    border: 2px solid black;
+    height: 90vw;
+    width: 90vw;
   }
   .game-area__gameboard-space {
     border-width: 1px;
     border-collapse: collapse;
-    min-width: 1.3rem;
-    min-height: 1.3rem;
-    width: 1.3rem;
-    height: 1.3rem;
+    width: calc(90vw / 10);
+    height: calc(90vw / 10);
     font-size: 0.5rem;
   }
   .message-area {
@@ -498,15 +499,8 @@ button:hover {
     transform: scale(0.75);
   }
   .place-ships__board {
-    height: 15.25rem;
-    width: 15.25rem;
-    border: 2px solid black;
   }
   .place-ships__board-space {
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
   }
   .player-info {
     width: 15.25rem;
