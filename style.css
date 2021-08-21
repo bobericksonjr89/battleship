@@ -102,7 +102,6 @@ button:hover {
 
 .place-ships {
   width: 25%;
-  min-width: 25.625rem;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -241,7 +240,6 @@ button:hover {
 
 .player-info {
   width: 25%;
-  min-width: 25.625rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -302,7 +300,6 @@ button:hover {
 -------------------*/
 
 .game-area {
-  min-width: 56rem;
   width: 50%;
   display: flex;
   justify-content: center;
@@ -472,14 +469,13 @@ button:hover {
     height: 1.3rem;
   }
   .game-area {
+    width: 100%;
   }
   .game-area__gameboard {
     height: 90vw;
     width: 90vw;
   }
   .game-area__gameboard-space {
-    border-width: 1px;
-    border-collapse: collapse;
     width: calc(90vw / 10);
     height: calc(90vw / 10);
     font-size: 0.5rem;
@@ -509,27 +505,13 @@ button:hover {
     width: 100%;
   }
   .player-info__board {
-    height: 15.25rem;
-    width: 15.25rem;
     border: 2px solid black;
   }
   .player-info__player-space {
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
   }
   .game-area__gameboard-space {
-    border-width: 1px;
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
     font-size: 0.5rem;
   }
   .game-area__gameboard {
-    height: 15.25rem;
-    width: 15.25rem;
-    border: 2px solid black;
   }
 }
